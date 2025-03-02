@@ -5,6 +5,8 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+console.log("Token do Discord:", process.env.DISCORD_TOKEN ? "Carregado" : "Não encontrado");
+
 // =================== Servidor Express ===================
 
 // Rota que recebe o ping e aciona o pong no servidor periódico
