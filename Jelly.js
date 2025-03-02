@@ -1,4 +1,4 @@
-require('dotenv').config(); // Carrega as variáveis do arquivo .env
+
 
 const { Client, GatewayIntentBits } = require('discord.js');
 
