@@ -60,6 +60,6 @@ client.on('messageCreate', message => {
 });
 
 // Login do bot no Discord
-client.login(DISCORD_TOKEN).catch(err => {
+client.login(process.env.DISCORD_TOKEN).catch(err => {
   console.error("❌ Erro ao conectar o bot no Discord:", err.message);
 });
