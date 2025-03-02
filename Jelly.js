@@ -1,4 +1,4 @@
-
+require('dotenv').config(); // Carrega as variáveis do arquivo .env
 
 const { Client, GatewayIntentBits } = require('discord.js');
 
@@ -9,7 +9,7 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', message => {
-    // Ignora mensagens do próprio bot para evitar loops
+    // Ignora mensagens do próprio bot
     if (message.author.bot) return;
 
     // Verifica se a mensagem é "!Ping" (case insensitive)
