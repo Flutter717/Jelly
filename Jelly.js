@@ -1,29 +1,39 @@
 const express = require('express');
 const axios = require('axios');
+const { Client, GatewayIntentBits } = require('discord.js');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// =================== Servidor Express ===================
+
 // Rota que recebe o ping e aciona o pong no servidor periódico
 app.get('/ping', async (req, res) => {
-  console.log("Recebeu ping");
-  res.send("Ping recebido. Enviando pong para o servidor periódico...");
-  
+  console.log("📩 Recebeu ping");
+
   try {
-    const response = await axios.get('https://servidor-periodico.onrender.com/pong');
-    console.log(`Requisição para /pong realizada com sucesso: ${response.data}`);
+    // Enviando requisição para o servidor periódico
+    const response = await axios.get('https://servidor-periodico.onrender.com/pong', {
+      params: { server: `ServidorB-${PORT}` }
+    });
+
+    console.log(`✅ Requisição para /pong realizada com sucesso: ${response.data}`);
+    res.send("Ping recebido e pong enviado com sucesso.");
+
   } catch (error) {
-    console.error("Erro ao enviar requisição para /pong:", error.message);
+    console.error("❌ Erro ao enviar requisição para /pong:", error.message);
+    res.status(500).send("Ping recebido, mas erro ao enviar pong.");
   }
 });
 
 // Inicializa o servidor Express
 app.listen(PORT, () => {
-  console.log(`Servidor web rodando na porta ${PORT}`);
+  console.log(`🚀 Servidor web rodando na porta ${PORT}`);
 });
 
 
-/* =================== Lógica do Discord Bot =================== */
-const { Client, GatewayIntentBits } = require('discord.js');
+// =================== Lógica do Discord Bot ===================
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -36,21 +46,18 @@ client.once('ready', () => {
   console.log(`✅ Bot conectado como ${client.user.tag}`);
 });
 
-// Registra o listener 'messageCreate' se ainda não estiver registrado
-if (!client.__messageCreateListenerRegistered) {
-  client.on('messageCreate', message => {
-    // Ignora mensagens do próprio bot para evitar loops
-    if (message.author.bot) return;
-    
-    // Se a mensagem for "!ping" (independente de maiúsculas/minúsculas)
-    if (message.content.toLowerCase() === '!ping') {
-      console.log('Respondendo a !ping');
-      message.reply('Pong! 🏓');
-    }
-  });
-  client.__messageCreateListenerRegistered = true;
-} else {
-  console.log('Listener "messageCreate" já estava registrado.');
-}
+client.on('messageCreate', message => {
+  // Ignora mensagens do próprio bot para evitar loops
+  if (message.author.bot) return;
+  
+  // Se a mensagem for "!ping" (ignora maiúsculas/minúsculas)
+  if (message.content.toLowerCase() === '!ping') {
+    console.log('🎾 Respondendo a !ping');
+    message.reply('Pong! 🏓');
+  }
+});
 
-client.login(process.env.DISCORD_TOKEN);
+// Login do bot no Discord
+client.login(DISCORD_TOKEN).catch(err => {
+  console.error("❌ Erro ao conectar o bot no Discord:", err.message);
+});
